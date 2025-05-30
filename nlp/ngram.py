@@ -2,34 +2,7 @@ import re
 import jieba
 from collections import defaultdict, Counter
 from typing import List, Optional, Tuple
-
-def clean_sentence(sentence):
-    # 去除网址
-    cleaned = re.sub(r'http\S+|www\S+|https\S+', '', sentence)
-    # 使用正则表达式匹配合法字符：中英文、数字、空格
-    cleaned = re.sub(r'[^a-zA-Z0-9\u4e00-\u9fa5\s]', ',', cleaned)
-    # 可选：去除首尾空白
-    cleaned = cleaned.strip()
-    return cleaned
-
-
-def get_cropus(file_path):
-    corpus = []
-    with open(file_path, 'r', encoding='utf-8') as file:
-        for line in file:
-            raw_sentence = clean_sentence(line)
-            sentence_array = raw_sentence.split(',')
-            for sentence in sentence_array:
-                if sentence:
-                    corpus.append(sentence)
-    return corpus
-
-
-def get_tokens(corpus):
-    tokens = []
-    for sentence in corpus:
-        tokens.extend(jieba.cut(sentence))
-    return tokens
+from nlp.tools import get_cropus, get_tokens
 
 
 class Ngram:
@@ -80,7 +53,7 @@ class Ngram:
         return (word_count + 1) / (total_count + vocab_size + 1e-6)
 
 if __name__ == '__main__':
-    corpus = get_cropus('ngram_txt')
+    corpus = get_cropus('dataset/1')
     tokens = get_tokens(corpus)
     model = Ngram(2)
     model.train(tokens)
